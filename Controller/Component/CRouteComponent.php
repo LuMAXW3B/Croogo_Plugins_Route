@@ -2,15 +2,12 @@
 /**
  * CRoute Component
  *
- * PHP version 5
- *
  * @category Route.Component
  * @package  Route
- * @version  1.5
- * @author   Damian Grant <codebogan@gmail.com>
- * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
- * @link     http://www.croogo.org
+ * @version  2.x
  */
+App::uses('Component', 'Controller');
+
 class CRouteComponent extends Component {
 
     public $controller = null;
@@ -54,7 +51,7 @@ class CRouteComponent extends Component {
      *
      * @param object $controller
      */
-    public function initialize(&$controller) {
+    public function initialize(Controller $controller) {
         // saving the controller reference for later use
         $this->controller =& $controller;
 
@@ -158,43 +155,43 @@ class CRouteComponent extends Component {
                     $resultArray['code'] = $code;
                     fwrite($fp, $code);
                     fclose($fp);
-                    $resultArray['output'] .= __d('croogo', 'File has been written to: %s', $path) . '<br />';
+                    $resultArray['output'] .= __d('route', 'File has been written to: %s', $path) . '<br />';
                 }
             } else {
-                $resultArray['output'] .= '<h3 style="color: red;">' . __d('croogo', 'Cannot overwrite %s', basename($path)) . '</h3>'
-                . '<strong style="color: red;">' . __d('croogo', 'Please ensure file is writable by the webserver process.') . '</strong>'
+                $resultArray['output'] .= '<h3 style="color: red;">' . __d('route', 'Cannot overwrite %s', basename($path)) . '</h3>'
+                . '<strong style="color: red;">' . __d('route', 'Please ensure file is writable by the webserver process.') . '</strong>'
                 . '<br /><br />'
-                . '<strong>' . __d('croogo', 'File Location: %s', $path) . '</strong>'
+                . '<strong>' . __d('route', 'File Location: %s', $path) . '</strong>'
                 . '<br />';
                 
                 if ($permissions != 0) {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'File Permissions are: %s', substr(sprintf('%o', $permissions), -4)) . '</strong>';
+                    $resultArray['output'] .= '<strong>' . __d('route', 'File Permissions are: %s', substr(sprintf('%o', $permissions), -4)) . '</strong>';
                 } else {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'File Permissions are:') . '</strong>' . ' ' . __d('croogo', 'Unknown (permissions issue?)');
+                    $resultArray['output'] .= '<strong>' . __d('route', 'File Permissions are:') . '</strong>' . ' ' . __d('route', 'Unknown (permissions issue?)');
                 }
                 
                 $resultArray['output'] .= '<br />';
                 
                 if ($permissions == 0) {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'File Mask is:') . '</strong>' . ' ' . __d('croogo', 'Unknown (permissions issue?)');
+                    $resultArray['output'] .= '<strong>' . __d('route', 'File Mask is:') . '</strong>' . ' ' . __d('route', 'Unknown (permissions issue?)');
                 } else {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'File Mask is: %s', $this->_resolveperms($permissions)) . ' </strong>';
+                    $resultArray['output'] .= '<strong>' . __d('route', 'File Mask is: %s', $this->_resolveperms($permissions)) . ' </strong>';
                 }
                 
                 $resultArray['output'] .= '<br />';
                 
                 if ($fileowner === false) {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'Owned by User:') . '</strong>' . ' ' . __d('croogo', 'Unknown (permissions issue?)');
+                    $resultArray['output'] .= '<strong>' . __d('route', 'Owned by User:') . '</strong>' . ' ' . __d('route', 'Unknown (permissions issue?)');
                 } else {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'Owned by User: %s', $fileownerarray['name']) . '</strong>';
+                    $resultArray['output'] .= '<strong>' . __d('route', 'Owned by User: %s', $fileownerarray['name']) . '</strong>';
                 }
                 
                 $resultArray['output'] .= '<br />'
-                . '<strong>' . __d('croogo', 'Owned by Group:', $filegrouparray['name']) . ' </strong>'
+                . '<strong>' . __d('route', 'Owned by Group:', $filegrouparray['name']) . ' </strong>'
                 . '<br />'
-                . '<strong>' . __d('croogo', 'Webserver running as User: %s', $webserver_process_user_array['name']) . '</strong>'
+                . '<strong>' . __d('route', 'Webserver running as User: %s', $webserver_process_user_array['name']) . '</strong>'
                 . '<br />'
-                . '<strong>' . __d('croogo', 'Webserver running in Group: %s', $webserver_process_group_array['name']) . '</strong>';					
+                . '<strong>' . __d('route', 'Webserver running in Group: %s', $webserver_process_group_array['name']) . '</strong>';					
             }
         } catch (Exception $e) {
             //do nothing

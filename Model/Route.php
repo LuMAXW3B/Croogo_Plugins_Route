@@ -2,14 +2,9 @@
 /**
  * Route
  *
- * PHP version 5
- *
  * @category Route.Model
- * @package  Croogo.Route
- * @version  1.5
- * @author   Damian Grant <codebogan@gmail.com>
- * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
- * @link     http://www.croogo.org
+ * @package  Route
+ * @version  2.x
  */
 App::uses('RouteAppModel', 'Route.Model');
 

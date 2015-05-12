@@ -1,14 +1,13 @@
 <?php
-$this->set('showActions', false);
-$this->extend('/Common/admin_index');
-$this->Html
-    ->addCrumb('', '/admin', array('icon' => 'home'))
-    ->addCrumb(__d('croogo', 'Extensions'), array('plugin' => 'extensions', 'controller' => 'extensions_plugins', 'action' => 'index'))
-    ->addCrumb(__d('croogo', 'List Routes'),  array('plugin' => 'route', 'controller' => 'routes', 'action' => 'index'))
-    ->addCrumb(__d('croogo', 'Regenerating Custom Routes File'), $this->here);;
+    $this->set('showActions', false);
+    $this->extend(DS . 'Common' . DS . 'admin_index');
+    $this->Html
+    ->addCrumb('', DS . 'admin', array('icon' => 'home'))
+    ->addCrumb(__d('route', 'Extensions'), array('plugin' => 'extensions', 'controller' => 'extensions_plugins', 'action' => 'index'))
+    ->addCrumb(__d('route', 'List Routes'),  array('plugin' => 'route', 'controller' => 'routes', 'action' => 'index'))
+    ->addCrumb(__d('route', 'Regenerating Custom Routes File'));
 ?>
 
-<?php echo $this->Form->create('Route', array('url' => array('plugin' => 'route', 'controller' => 'routes', 'action' => 'index'))); ?>
 <div class="row-fluid">
     <div class="span8">
         <ul class="nav nav-tabs">
@@ -24,11 +23,9 @@ $this->Html
     </div>
     <div class="span4">
         <?php
-            echo $this->Html->beginBox(__d('croogo', 'Actions'))
-            . $this->Form->button(__d('croogo', 'Okay'), array('class' => 'btn btn-success'))
-            . $this->Html->link(__d('croogo', 'Cancel'), array('action' => 'index'), array('button' => 'danger'))
+            echo $this->Html->beginBox(__d('route', 'Actions'))
+            . $this->Html->link(__d('route', 'Back'), array('action' => 'index'), array('button' => 'success'))
             . $this->Html->endBox();
         ?>
     </div>
 </div>
-<?php echo $this->Form->end(); ?>

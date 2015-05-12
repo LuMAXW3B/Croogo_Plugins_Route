@@ -24,7 +24,7 @@ Croogo::hookComponent('Nodes', 'Route.CRoute');
  * Admin menu (navigation)
  */
 CroogoNav::add('extensions.children.route', array(
-    'title' => __d('croogo', 'Routes'),
+    'title' => __d('route', 'Routes'),
     'url' => array(
         'plugin' => 'route',
         'controller' => 'routes',
@@ -33,7 +33,7 @@ CroogoNav::add('extensions.children.route', array(
     'access' => array('admin'),
     'children' => array(
         'createroutes' => array(
-            'title' => __d('croogo', 'Create Route'),
+            'title' => __d('route', 'Create Route'),
             'url' => array(
                 'plugin' => 'route',
                 'controller' => 'routes',
@@ -42,7 +42,7 @@ CroogoNav::add('extensions.children.route', array(
             'weight' => 5,
         ),
         'regenerateroutes' => array(
-            'title' => __d('croogo', 'Regenerate Routes File'),
+            'title' => __d('route', 'Regenerate Routes File'),
             'url' => array(
                 'plugin' => 'route',
                 'controller' => 'routes',

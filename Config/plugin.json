@@ -1,15 +1,14 @@
 {
-	"name": "Route",
-	"description": "Manage Dynamic Routes",
+    "name": "Route",
+    "description": "Manage Dynamic Routes",
 
-	"author": "Damian Grant",
-	"authorEmail": "codebogan@gmail.com",
-	"authorUrl": "http://github.com/deplorable/Croogo_Plugins_Route",
+    "author": "Lukas Marks",
+    "authorEmail": "info@lumax-web.de",
+    "authorUrl": "http://www.lumax-web.de",
 
-	"dependencies": {
-		"plugins": [
-			"acl",
-			"extensions"
-		]
-	}
+    "dependencies": {
+        "plugins": [
+            "extensions"
+        ]
+    }
 }

@@ -2,15 +2,12 @@
 /**
  * Route Behavior
  *
- * PHP version 5
- *
  * @category Behavior
  * @package  Croogo
- * @version  1.5
- * @author   Damian Grant <codebogan@gmail.com>
- * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
- * @link     http://www.croogo.org
+ * @version  2.x
  */
+App::uses('ModelBehavior', 'Model');
+
 class RouteBehavior extends ModelBehavior {
 
     /**
@@ -36,9 +33,9 @@ class RouteBehavior extends ModelBehavior {
      * @param array  $config
      * @return void
      */
-    public function setup(&$model, $config = array()) {
+    public function setup(Model $model, $config = array()) {
         if (is_string($config)) {
-                $config = array($config);
+            $config = array($config);
         }
         $this->settings[$model->alias] = $config;
     }
@@ -51,10 +48,17 @@ class RouteBehavior extends ModelBehavior {
      * @param boolean $primary
      * @return array
      */
-    public function afterFind(&$model, $results = array(), $primary = false) {
+    public function afterFind(Model $model, $results = array(), $primary = false) {
         if ($model->alias == 'Node') {
-            foreach ($results AS $i => $result) {
-                $results[$i]['Route'] = array();
+            foreach ($results as $i => $result) {
+                
+                $route = array();
+                if (!empty($result['Node']['id'])) {
+                    $this->Route = ClassRegistry::init('Route.Route');	
+                    $route = $this->Route->find('first', array('conditions' => array('Route.node_id' => $result['Node']['id'])));
+                }
+                
+                $results[$i]['Route'] = $route;
             }
         }
         return $results;
@@ -67,7 +71,7 @@ class RouteBehavior extends ModelBehavior {
      * @param object  $model
      * @return boolean
      */
-    public function beforeValidate(&$model) {
+    public function beforeValidate(Model $model, $options = array()) {
         /* these validation rules may cause validation to fail on node submit */
         $model->validate['route_alias'] = array(
             'aliasDoesNotExist' => array(
@@ -83,7 +87,7 @@ class RouteBehavior extends ModelBehavior {
     }
 	
     /*
-     *  public function beforeSave(&$model) {
+     *  public function beforeSave($options = array()) {
      *      return false;
      *  }
     */
@@ -94,19 +98,18 @@ class RouteBehavior extends ModelBehavior {
      *
      * @param object  $model
      */	
-    public function afterDelete(&$model) {
+    public function afterDelete(Model $model) {
         if ($model->name == 'Node') {
-            //see if a route exists for this node
-            //lets look for the node_id in the Routes table
-            $node_id = $model->data['Node']['id'];
-            $params = array('conditions' => array('Route.node_id' => $node_id));
+            
             $this->Route = ClassRegistry::init('Route.Route');;		
-            $matchingRoute = $this->Route->find('first', $params);
-            if ($matchingRoute != null) { //let's delete the matching route
-                $routeID = $matchingRoute['Route']['id'];
-                $this->Route->delete($routeID);
+            $route = $this->Route->find('first', array('conditions' => array('Route.node_id' => $model->id)));
+            
+            if (!empty($route)) {
+                
+                $this->Route->delete($route['Route']['id']);
                 clearCache();
                 $this->write_custom_routes_file();
+                
             }
         }
     }
@@ -118,10 +121,10 @@ class RouteBehavior extends ModelBehavior {
      * @param object  $model
      * @param boolean   $created
      */		
-    public function afterSave(&$model, $created) {
+    public function afterSave(Model $model, $created, $options = array()) {
         if ($model->alias == 'Node') {
             $data = $model->data['Node'];
-			
+	    
             //this statement prevents code from executing when node is deleted
             if (isset($data['route_alias'])) { 
                 $route_alias = $data['route_alias'];
@@ -269,43 +272,43 @@ class RouteBehavior extends ModelBehavior {
                     $resultArray['code'] = $code;
                     fwrite($fp, $code);
                     fclose($fp);
-                    $resultArray['output'] .= __d('croogo', 'File has been written to: %s', $path) . '<br />';
+                    $resultArray['output'] .= __d('route', 'File has been written to: %s', $path) . '<br />';
                 }
             } else {
-                $resultArray['output'] .= '<h3 style="color: red;">' . __d('croogo', 'Cannot overwrite %s', basename($path)) . '</h3>'
-                . '<strong style="color: red;">' . __d('croogo', 'Please ensure file is writable by the webserver process.') . '</strong>'
+                $resultArray['output'] .= '<h3 style="color: red;">' . __d('route', 'Cannot overwrite %s', basename($path)) . '</h3>'
+                . '<strong style="color: red;">' . __d('route', 'Please ensure file is writable by the webserver process.') . '</strong>'
                 . '<br /><br />'
-                . '<strong>' . __d('croogo', 'File Location: %s', $path) . '</strong>'
+                . '<strong>' . __d('route', 'File Location: %s', $path) . '</strong>'
                 . '<br />';
                 
                 if ($permissions != 0) {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'File Permissions are: %s', substr(sprintf('%o', $permissions), -4)) . '</strong>';
+                    $resultArray['output'] .= '<strong>' . __d('route', 'File Permissions are: %s', substr(sprintf('%o', $permissions), -4)) . '</strong>';
                 } else {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'File Permissions are:') . '</strong>' . ' ' . __d('croogo', 'Unknown (permissions issue?)');
+                    $resultArray['output'] .= '<strong>' . __d('route', 'File Permissions are:') . '</strong>' . ' ' . __d('route', 'Unknown (permissions issue?)');
                 }
                 
                 $resultArray['output'] .= '<br />';
                 
                 if ($permissions == 0) {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'File Mask is:') . '</strong>' . ' ' . __d('croogo', 'Unknown (permissions issue?)');
+                    $resultArray['output'] .= '<strong>' . __d('route', 'File Mask is:') . '</strong>' . ' ' . __d('route', 'Unknown (permissions issue?)');
                 } else {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'File Mask is: %s', $this->_resolveperms($permissions)) . ' </strong>';
+                    $resultArray['output'] .= '<strong>' . __d('route', 'File Mask is: %s', $this->_resolveperms($permissions)) . ' </strong>';
                 }
                 
                 $resultArray['output'] .= '<br />';
                 
                 if ($fileowner === false) {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'Owned by User:') . '</strong>' . ' ' . __d('croogo', 'Unknown (permissions issue?)');
+                    $resultArray['output'] .= '<strong>' . __d('route', 'Owned by User:') . '</strong>' . ' ' . __d('route', 'Unknown (permissions issue?)');
                 } else {
-                    $resultArray['output'] .= '<strong>' . __d('croogo', 'Owned by User: %s', $fileownerarray['name']) . '</strong>';
+                    $resultArray['output'] .= '<strong>' . __d('route', 'Owned by User: %s', $fileownerarray['name']) . '</strong>';
                 }
                 
                 $resultArray['output'] .= '<br />'
-                . '<strong>' . __d('croogo', 'Owned by Group:', $filegrouparray['name']) . ' </strong>'
+                . '<strong>' . __d('route', 'Owned by Group:', $filegrouparray['name']) . ' </strong>'
                 . '<br />'
-                . '<strong>' . __d('croogo', 'Webserver running as User: %s', $webserver_process_user_array['name']) . '</strong>'
+                . '<strong>' . __d('route', 'Webserver running as User: %s', $webserver_process_user_array['name']) . '</strong>'
                 . '<br />'
-                . '<strong>' . __d('croogo', 'Webserver running in Group: %s', $webserver_process_group_array['name']) . '</strong>';
+                . '<strong>' . __d('route', 'Webserver running in Group: %s', $webserver_process_group_array['name']) . '</strong>';
             }
         } catch (Exception $e) {
             //do nothing
